@@ -1,0 +1,44 @@
+
+                let docRef = self!.db.collection("users").document("A")
+                var fname: String
+                docRef.getDocument { (document, error) in
+                    if let document = document, document.exists {
+                        let dataDescription = document.data().map(String.init(describing:)) ?? "nil"
+                        dataDescription([
+                            "First Name" : fname
+                        ])
+                        print("Document data: \(dataDescription)")
+                    } else {
+                        print("Document does not exist")
+                        
+                    }
+                }
+            }
+        }
+//        // Create a reference to the cities collection
+//        let usersref = db.collection("users")
+//
+//        // Create a query against the collection.
+//        let query = usersref.document(<#T##documentPath: String##String#>) .whereField("State", isEqualTo: "Kashmir")
+//        print("This is rsult \(query)")
+        //"print(query.value(forKey: "First Name"))
+       // let query = usersref.whereField("state", isEqualTo: "CA")
+//
+       // To get current user's details
+//        if Auth.auth().currentUser != nil {
+//            let currentUser  = Auth.auth().currentUser
+//            currentUser?(currentUser?.uid).
+//            print((currentUser?.uid ?? "") as String)
+//
+//            db.collection("users").getDocuments { snapshot, err in
+//                if let err = err {
+//                    print("error fetching documets \(err)")
+//                } else {
+//                    print("#########################")
+//                    for document in snapshot!.documents {
+//
+//                        print("\(document.documentID) => \(document.data())")
+//                    }
+//                }
+//            }
+//        }

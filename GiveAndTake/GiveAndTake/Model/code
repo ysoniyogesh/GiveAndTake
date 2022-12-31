@@ -1,0 +1,225 @@
+
+
+import Foundation
+import UIKit
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseAuth
+import FirebaseStorage
+
+class HomeScreenViewController: UIViewController {
+    
+    @IBOutlet weak var tableView: UITableView!
+    let db = Firestore.firestore()
+    var donationCellArray : [DonationData] = []
+    var newDonationCell = DonationData(donationTitle: "a", donationDescription: "b", donationImage: UIImage(named: "placeholder")!)
+    var downloadedImages = RetrievedImage(gotimage: nil)
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        tableView.dataSource = self
+        tableView.register(UINib(nibName: "DonationCell", bundle: nil), forCellReuseIdentifier: "ReuseableCell")
+        fetchDataFromDatabase()
+    }
+    
+    func fetchDataFromDatabase() {
+        donationCellArray = []
+        db.collection("Donations").getDocuments() { (querySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err)")
+            } else {
+                if let snapshotDocuments = querySnapshot?.documents {
+                    
+                    for doc in snapshotDocuments {
+                        let Data = doc.data()
+                        
+                        if let itemTitle = Data["Item Title"] as? String, let itemDescription = Data["Item Description"] as? String, let imageName = Data["Image Name"] as? String {
+                            
+                            self.downloadImage(imageName: imageName)
+                            self.donationCellArray[0].donationDescription = itemDescription
+                            self.donationCellArray[0].donationTitle = itemTitle
+//                            self.newDonationCell.donationTitle = itemTitle
+//                            self.newDonationCell.donationDescription = itemDescription
+//
+                            //self.donationCellArray.append(self.newDonationCell)
+                            
+                            DispatchQueue.main.async {
+                                self.tableView.reloadData()
+                                let indexPath = IndexPath(row: self.donationCellArray.count - 1, section: 0)
+                                self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+//MARK: downloadImage
+    func downloadImage(imageName: String) {
+        print("downloadimage is called")
+        
+        // Create a reference to the file you want to download
+        let storageRef = Storage.storage().reference()
+        let imageRef = storageRef.child(imageName)
+
+        // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
+        imageRef.getData(maxSize: 1 * 1024 * 1024) { data, error in
+          if let error = error {
+            print(error)
+          } else {
+            // Data for images is returned
+              if let image = UIImage(data: data!) {
+                  //print(image)
+                 // self.newDonationCell.donationImage = image
+                  self.donationCellArray[0].donationImage = image
+                  
+              }
+          }
+        }
+      }
+    }
+
+//MARK: UITableViewDataSource
+extension HomeScreenViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return donationCellArray.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ReuseableCell", for: indexPath) as! DonationCell
+        print(indexPath.row)
+        cell.itemTitle.text = donationCellArray[indexPath.row].donationTitle
+        cell.descriptionLabel.text = donationCellArray[indexPath.row].donationDescription
+        cell.itemImage.image = donationCellArray[indexPath.row].donationImage
+        return cell
+    }
+}
+
+#################################################################################### 24 Oct, 8: 43 am
+
+import Foundation
+import UIKit
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseAuth
+import FirebaseStorage
+
+class HomeScreenViewController: UIViewController {
+    
+    @IBOutlet weak var tableView: UITableView!
+    let db = Firestore.firestore()
+    var donationCellArray : [DonationData] = []
+    var complete: Bool = false
+    //var count = 0
+    //var donationCell = DonationData(donationTitle: " ", donationDescription: " ", ImageName: " ")
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        tableView.dataSource = self
+        tableView.register(UINib(nibName: "DonationCell", bundle: nil), forCellReuseIdentifier: "ReuseableCell")
+        fetchDataFromDatabase()
+        if complete == true {
+            reloadData()
+        }
+
+        
+    } // viewDidLoad ends here
+    
+    @IBAction func refreshpPessed(_ sender: Any) {
+        print("refreshpPressed")
+        reloadData()
+       
+        
+    }
+    func fetchDataFromDatabase() {
+        donationCellArray = []
+        db.collection("Donations").getDocuments() { (querySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err)")
+            } else {
+                if let snapshotDocuments = querySnapshot?.documents {
+                    
+                    for doc in snapshotDocuments {
+                        let Data = doc.data()
+                        
+                        if let itemTitle = Data["Item Title"] as? String,
+                           let itemDescription = Data["Item Description"] as? String,
+                           let imageName = Data["Image Name"] as? String {
+                            let newDonationCell = DonationData(donationTitle: itemTitle, donationDescription: itemDescription, ImageName: imageName)
+                            
+                                self.donationCellArray.append(newDonationCell)
+                                print(self.donationCellArray)
+                               
+                        }
+                            
+                    }
+                    print(self.donationCellArray)
+                    self.downloadImage()
+                }
+            }
+        }
+    }
+//MARK: downloadImage
+    func downloadImage() {
+        // Create a reference to the file you want to download
+        let storageRef = Storage.storage().reference()
+        var j: Int = 0
+        
+        for i in self.donationCellArray {
+            let name = i.ImageName
+            let imageRef = storageRef.child(name)
+        // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
+            imageRef.getData(maxSize: 1 * 1024 * 1024) { data, error in
+                if let error = error {
+                    print(error)
+                } else {
+                    // Data for images is returned
+                    if let image = UIImage(data: data!) {
+                        DispatchQueue.main.async {
+                            self.donationCellArray[j].donationImage = image
+                            print(self.donationCellArray[j].donationImage )
+                            j += 1
+                            
+                        }
+                        
+                       
+                    }
+                } // else block ends here.
+            }
+        } // for loop ends here.
+      
+    }
+    
+//___________
+    
+    func reloadData() {
+        
+        for i in 0 ..< self.donationCellArray.count {
+            self.tableView.reloadData()
+            let indexPath = IndexPath(row: i, section: 0)
+            self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+        }
+        
+        return
+    }
+//___________
+ } // Main class ends here
+
+//MARK: UITableViewDataSource
+extension HomeScreenViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return donationCellArray.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ReuseableCell", for: indexPath) as! DonationCell
+        print("reload is called ")
+        print(indexPath.row)
+        cell.itemTitle.text = donationCellArray[indexPath.row].donationTitle
+        cell.descriptionLabel.text = donationCellArray[indexPath.row].donationDescription
+        cell.itemImage.image = donationCellArray[indexPath.row].donationImage
+        
+        return cell
+    }
+}
+

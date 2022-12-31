@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>408681193643-j5didcov7noaa5ufcjkbm0vo0b5er8jj.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.408681193643-j5didcov7noaa5ufcjkbm0vo0b5er8jj</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBz7s1ZpToBXazv8XwxpXLQFkeaQ6Lprfs</string>
+	<key>GCM_SENDER_ID</key>
+	<string>408681193643</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.Yogesh.GiveAndTake</string>
+	<key>PROJECT_ID</key>
+	<string>giveandtake-53dbd</string>
+	<key>STORAGE_BUCKET</key>
+	<string>giveandtake-53dbd.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:408681193643:ios:3f45bfd1e6e982f16e57ee</string>
+</dict>
+</plist>
